@@ -50,7 +50,7 @@ class Block:
         nonce = 0
         hash = crypto_hash(timestamp, last_hash, data, difficulty, nonce)
 
-        while hex_to_binary(hash[0:difficulty]) != '0' * difficulty:
+        while hex_to_binary(hash)[0:difficulty] != '0' * difficulty:
             nonce += 1
             timestamp = time.time_ns()
             difficulty = Block.adjust_difficulty(last_block, timestamp)

@@ -14,7 +14,7 @@ def test_mine_block():
     assert block.data == data
     assert block.last_hash == last_block.hash
     assert hex_to_binary(
-        block.hash[0:block.difficulty]) == '0' * block.difficulty
+        block.hash)[0:block.difficulty] == '0' * block.difficulty
 
 
 def test_genesis():
