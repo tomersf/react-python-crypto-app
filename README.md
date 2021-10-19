@@ -5,11 +5,18 @@
 **Activate the venv**
 
 ```
-source blockchain-env/bin/activate
+blockchain-env/Scripts/activate
 ```
 
 **Install all packages**
 
 ```
 pip3 install -r requirements.txt
+```
+
+**Run tests**
+First Activate venv
+
+```
+python -m pytest backend/tests
 ```
