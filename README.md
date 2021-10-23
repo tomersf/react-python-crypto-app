@@ -20,3 +20,10 @@ First Activate venv
 ```
 python -m pytest backend/tests
 ```
+
+**Run app**
+First Activate venv
+
+```
+python -m backend.app
+```

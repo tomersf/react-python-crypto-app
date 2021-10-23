@@ -41,6 +41,12 @@ class Block:
     def __eq__(self, o: object) -> bool:
         return self.__dict__ == o.__dict__
 
+    def to_json(self):
+        """
+        Serialize the Block
+        """
+        return self.__dict__
+
     @staticmethod
     def mine_block(last_block, data):
         """
