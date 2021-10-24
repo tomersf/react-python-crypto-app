@@ -5,7 +5,7 @@
 **Activate the venv**
 
 ```
-blockchain-env/Scripts/activate
+backend/blockchain-env/Scripts/activate
 ```
 
 **Install all packages**
@@ -26,4 +26,10 @@ First Activate venv
 
 ```
 python -m backend.app
+```
+
+**Run peer**
+
+```
+export PEER=True && python -m backend.app
 ```
