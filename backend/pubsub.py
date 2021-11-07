@@ -1,4 +1,5 @@
 import time
+from backend.wallet.transaction import Transaction
 
 from pubnub.pubnub import PubNub
 from pubnub.pnconfiguration import PNConfiguration
@@ -13,14 +14,16 @@ pnconfig.publish_key = publish_key
 
 CHANNELS = {
     'TEST': 'TEST',
-    'BLOCK': 'BLOCK'
+    'BLOCK': 'BLOCK',
+    'TRANSACTION': 'TRANSACTION'
 }
 
 
 class Listener(SubscribeCallback):
-    def __init__(self, blockchain) -> None:
+    def __init__(self, blockchain, transaction_pool) -> None:
         # super().__init__()
         self.blockchain = blockchain
+        self.transaction_pool = transaction_pool
 
     def message(self, pubnub, message_object):
         print(
@@ -37,6 +40,11 @@ class Listener(SubscribeCallback):
             except Exception as e:
                 print(f'\n-- Did not replace the chain: {e}')
 
+        elif message_object.channel == CHANNELS['TRANSACTION']:
+            transaction = Transaction.from_json(message_object.message)
+            self.transaction_pool.set_transaction(transaction)
+            print('\n -- Set the new transaction in the transaction pool')
+
 
 class PubSub():
     """
@@ -44,10 +52,10 @@ class PubSub():
     provides communication between the nodes of the blockchain network
     """
 
-    def __init__(self, blockchain) -> None:
+    def __init__(self, blockchain, transaction_pool) -> None:
         self.pubnub = PubNub(pnconfig)
         self.pubnub.subscribe().channels(list(CHANNELS.values())).execute()
-        self.pubnub.add_listener(Listener(blockchain))
+        self.pubnub.add_listener(Listener(blockchain, transaction_pool))
 
     def publish(self, channel, msg):
         """
@@ -60,6 +68,12 @@ class PubSub():
         Broadcast a block obj to all nodes
         """
         self.publish(CHANNELS['BLOCK'], block.to_json())
+
+    def broadcast_transaction(self, transaction):
+        """
+        Broadcast a transaction to all nodes.
+        """
+        self.publish(CHANNELS['TRANSACTION'], transaction.to_json())
 
 
 def main():
