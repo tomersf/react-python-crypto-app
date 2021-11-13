@@ -15,6 +15,7 @@ pip3 install -r requirements.txt
 ```
 
 **Run tests**
+
 First Activate venv
 
 ```
@@ -22,14 +23,18 @@ python -m pytest backend/tests
 ```
 
 **Run app**
+
 First Activate venv
 
 ```
 python -m backend.app
 ```
 
-**Run peer**
+**Connection to pubsub**
+
+should be in env.py
 
 ```
-export PEER=True && python -m backend.app
+subscribe_key =  ************
+publish_key =  ************
 ```
