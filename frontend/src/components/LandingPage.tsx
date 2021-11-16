@@ -10,11 +10,15 @@ const useStyles = makeStyles( (theme) => ({
         width: '50%',
         color: 'white',
     },
+    leftContainer: {
+
+    },
     divider : {
         transform: 'rotate(-15deg)',
         width: '2px',
         color: 'white',
     },
+    rightContainer: {},
 }));
 
 
@@ -24,16 +28,18 @@ const LandingPage = () => {
     return (
         <Grid container justifyContent='center' alignItems='center' className={classes.mainContainer}>
             <Grid item container className={classes.subContainer}>
-                <Grid md item direction='column' >
+                <Grid md item direction='column' className={classes.leftContainer} >
+                    <Grid item direction='column' style={{position: 'absolute', backgroundColor:'black'}} >
                     <Typography variant="h1">
                         Chuku
                     </Typography>
-                    <Typography variant="h3">
+                    <Typography variant="h2" style={{justifyContent: 'flex-end'}}>
                         CRYPTOCURRENCY
                     </Typography>
+                    </Grid>
                 </Grid>
                 <Divider orientation='vertical' className={classes.divider}/>
-                <Grid md item style={{background: 'red'}} >
+                <Grid md item  >
                     <Typography variant="h4" paragraph>
                     Chuku is the best cryptocurrency!
                     <br />
