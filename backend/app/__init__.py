@@ -2,7 +2,7 @@ import os
 import random
 import requests
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,Response
 from flask_cors import CORS
 
 from backend.blockchain.blockchain import Blockchain
@@ -14,62 +14,105 @@ from backend.pubsub import PubSub
 app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': 'http://localhost:3000'}})
 blockchain = Blockchain()
-wallet = Wallet(blockchain)
 transaction_pool = TransactionPool()
 pubsub = PubSub(blockchain, transaction_pool)
+wallets_dict = dict()
 
 
-@app.route('/')
-def route_default():
-    return '<h1>Welcome to the Blockchain!</h1>'
+def is_user_in_dict(name):
+    if name in wallets_dict:
+        return True
+    return False
+
+@app.route('/login', methods=['POST'])
+def route_login():
+    login_data = request.get_json()
+    username = login_data['name']
+    if not username in wallets_dict:
+        wallets_dict.update({username: Wallet()})
+        return Response(status=201)
+
+    return Response(status=200)
 
 
 @app.route('/blockchain')
 def route_blockchain():
     return jsonify(blockchain.to_json())
 
+@app.route('/blockchain/range')
+def route_blockchain_range():
+    # example : http://localhost:5000/blockchain/range?start=3&end=6 
+    start = int(request.args.get('start'))
+    end = int(request.args.get('end'))
+
+    return jsonify(blockchain.to_json()[::-1][start:end])
+
+
+@app.route('/blockchain/length')
+def route_blockchain_length():
+    return jsonify(len(blockchain.chain))
 
 @app.route('/blockchain/mine')
 def route_blockchain_mine():
-    transaction_data = transaction_pool.transaction_data()
-    transaction_data.append(Transaction.reward_transaction(wallet).to_json())
-    blockchain.add_block(transaction_data)
-    block = blockchain.chain[-1]
-    pubsub.broadcast_block(block)
-    transaction_pool.clear_blockchain_transactions(blockchain)
+    username = request.args.get('user')
+    if is_user_in_dict(username):
+        wallet = wallets_dict[username]
+        transaction_data = transaction_pool.transaction_data()
+        transaction_data.append(Transaction.reward_transaction(wallet).to_json())
+        blockchain.add_block(transaction_data)
+        block = blockchain.chain[-1]
+        pubsub.broadcast_block(block)
+        transaction_pool.clear_blockchain_transactions(blockchain)
 
-    return jsonify(block.to_json())
+        return jsonify(block.to_json())
+    
+    return "User not found", 401
+
+@app.route('/users')
+def route_users():
+    return jsonify(list(set(wallets_dict.keys())))
 
 
 @app.route('/wallet/transact', methods=['POST'])
 def route_wallet_transact():
     transaction_data = request.get_json()
-    transaction = transaction_pool.existing_transaction(wallet.address)
+    username = transaction_data['name']
+    if is_user_in_dict(username):
+        wallet = wallets_dict[username]
+        transaction = transaction_pool.existing_transaction(wallet.address)
 
-    if transaction:
-        transaction.update(
-            wallet,
-            transaction_data['recipient'],
-            transaction_data['amount']
-        )
-    else:
-        transaction = Transaction(
-            wallet,
-            transaction_data['recipient'],
-            transaction_data['amount']
-        )
+        if transaction:
+            transaction.update(
+                wallet,
+                transaction_data['recipient'],
+                transaction_data['amount']
+            )
+        else:
+            transaction = Transaction(
+                wallet,
+                transaction_data['recipient'],
+                transaction_data['amount']
+            )
 
-    pubsub.broadcast_transaction(transaction)
+        pubsub.broadcast_transaction(transaction)
 
-    return jsonify(transaction.to_json())
+        return jsonify(transaction.to_json())
+    
+    return "Could not make transaction, user is not registered!",  401
 
 
 @app.route('/wallet/info')
 def route_wallet_info():
-    return jsonify({
-        'address': wallet.address,
-        'balance': wallet.balance
-    })
+    username = request.args.get('user')
+    if is_user_in_dict(username):
+        wallet = wallets_dict[username]
+        return jsonify({
+            'address': wallet.address,
+            'balance': wallet.balance,
+            'name': wallet.name
+        })
+    
+    return "No user wallet found", 400
 
 
 ROOT_PORT = 5000

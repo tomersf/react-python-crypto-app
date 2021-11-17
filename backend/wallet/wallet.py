@@ -16,7 +16,7 @@ class Wallet:
     allow a miner to authorize transactions.
     """
 
-    def __init__(self, blockchain=None) -> None:
+    def __init__(self, blockchain=None, name=None) -> None:
         self.address = str(uuid.uuid4())[0:8]
         self.private_key = ec.generate_private_key(
             ec.SECP256K1(),
@@ -24,6 +24,7 @@ class Wallet:
         self.public_key = self.private_key.public_key()
         self.serialize_public_key()
         self.blockchain = blockchain
+        self.name = name
 
     @property
     def balance(self):
