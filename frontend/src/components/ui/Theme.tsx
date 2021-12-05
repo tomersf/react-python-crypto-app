@@ -1,4 +1,14 @@
 import { createTheme } from "@material-ui/core/styles";
+declare module "@material-ui/core/styles/createBreakpoints" {
+  interface BreakpointOverrides {
+    xs: true;
+    sm: true;
+    md: true;
+    lg: true;
+    xl: true;
+    xxl: true;
+  }
+}
 
 const chukuPrimary = "#F7FFF6";
 const chukuSecondary = "#3A3335";
@@ -10,6 +20,16 @@ export default createTheme({
     },
     secondary: {
       main: chukuSecondary,
+    },
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+      xxl: 2600,
     },
   },
   typography: {
