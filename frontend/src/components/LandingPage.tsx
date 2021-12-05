@@ -5,7 +5,14 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Modal,
+  Backdrop,
+  Fade,
+  TextField,
+  IconButton,
+  Button,
 } from "@material-ui/core";
+import { useState } from "react";
 import Footer from "./Footer";
 import ClipPathButton from "./ui/ClipPathButton";
 
@@ -28,6 +35,20 @@ const useStyles = makeStyles((theme) => ({
     "100%": {
       opacity: 1,
     },
+  },
+  modal: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  paper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "linear-gradient(#00bcb4, #c4e86b)",
+    boxShadow: theme.shadows[6],
+    padding: theme.spacing(2, 4, 3),
   },
   mainContainer: {
     [theme.breakpoints.up("lg")]: {
@@ -103,107 +124,174 @@ const useStyles = makeStyles((theme) => ({
       marginTop: "0.6rem",
     },
   },
+  enterButton: {
+    marginTop: "12px",
+    fontSize: "1.5rem",
+  },
 }));
 
 const LandingPage = () => {
+  const [modal, setModal] = useState(false);
+  const [username, setUsername] = useState("");
+  const [error, setError] = useState(false);
   const classes = useStyles();
   const theme = useTheme();
   const matchesXS = useMediaQuery(theme.breakpoints.down("md"));
 
+  const validateUserName = (username: string): boolean => {
+    let valid = false;
+    if (username.trim().length !== 0) {
+      valid = true;
+    }
+    console.log(username);
+    setError(!valid);
+    setUsername(username);
+    return valid;
+  };
+
+  const loginHandler = (): void => {
+    if (validateUserName(username)) {
+      setError(false);
+      setModal(false);
+      // go to next page
+    } else {
+      return;
+    }
+  };
+
   return (
-    <Grid container className={classes.mainContainer}>
-      <Grid
-        item
-        direction={matchesXS ? "column" : "row"}
-        container
-        className={classes.subContainer}
+    <>
+      <Modal
+        className={classes.modal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+        open={modal}
+        onClose={() => setModal(false)}
       >
-        {/* Left Container */}
-        <Grid
-          md
-          lg={4}
-          item
-          container
-          direction="column"
-          className={classes.leftContainer}
-        >
-          <Grid item direction="column">
-            <Typography
-              variant="h1"
-              style={{
-                fontSize: matchesXS ? "5rem" : "8.5rem",
-              }}
-            >
-              Chuku
-            </Typography>
-            <Typography
-              variant="h2"
-              style={{ fontSize: matchesXS ? "0px" : "3.2rem" }}
-            >
-              A NEW CRYPTOCURRENCY
-            </Typography>
-          </Grid>
-        </Grid>
-
-        {/* Divider */}
-        <Grid
-          container
-          item
-          lg={2}
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Divider orientation="vertical" className={classes.divider} />
-        </Grid>
-
-        {/* Right Container */}
-        <Grid
-          md
-          lg={6}
-          item
-          container
-          direction="column"
-          className={classes.rightContainer}
-          spacing={4}
-        >
-          <Grid item container className={classes.rightSubTextContainer}>
+        <Fade in={modal}>
+          <div className={classes.paper}>
             <Typography
               variant="body1"
-              paragraph
-              style={{ fontSize: matchesXS ? "1.5rem" : "3.5rem" }}
+              style={{ color: theme.palette.primary.main }}
             >
-              Welcome to
+              Enter name:
+            </Typography>
+            <TextField
+              inputProps={{ maxLength: 20 }}
+              error={error}
+              onChange={(e) => validateUserName(e.target.value)}
+              value={username}
+              helperText={error ? "Enter a valid name!" : ""}
+            />
+            <Button
+              variant="outlined"
+              color="primary"
+              size="large"
+              className={classes.enterButton}
+              onClick={loginHandler}
+            >
+              ENTER THE BLOCKCHAIN
+            </Button>
+          </div>
+        </Fade>
+      </Modal>
+      <Grid container className={classes.mainContainer}>
+        <Grid
+          item
+          direction={matchesXS ? "column" : "row"}
+          container
+          className={classes.subContainer}
+        >
+          {/* Left Container */}
+          <Grid
+            md
+            lg={4}
+            item
+            container
+            direction="column"
+            className={classes.leftContainer}
+          >
+            <Grid item direction="column">
               <Typography
                 variant="h1"
                 style={{
-                  display: "inline",
-                  fontSize: matchesXS ? "2rem" : "4rem",
-                  marginLeft: "6px",
-                  marginRight: "10px",
+                  fontSize: matchesXS ? "5rem" : "8.5rem",
                 }}
               >
                 Chuku
               </Typography>
-              crypto currency website.
-              <br /> A small project that was created for fun using Python &
-              React.
-              <br />
-              Try it by yourself! see how you can make transactions, mine blocks
-              and watch how they are added to the blockchain!
-            </Typography>
+              <Typography
+                variant="h2"
+                style={{ fontSize: matchesXS ? "0px" : "3.2rem" }}
+              >
+                A NEW CRYPTOCURRENCY
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item className={classes.button}>
-            <ClipPathButton />
+
+          {/* Divider */}
+          <Grid
+            container
+            item
+            lg={2}
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Divider orientation="vertical" className={classes.divider} />
           </Grid>
-          {/* Footer */}
-          <Grid container direction="column" item className={classes.footer}>
-            <Footer />
+
+          {/* Right Container */}
+          <Grid
+            md
+            lg={6}
+            item
+            container
+            direction="column"
+            className={classes.rightContainer}
+            spacing={4}
+          >
+            <Grid item container className={classes.rightSubTextContainer}>
+              <Typography
+                variant="body1"
+                paragraph
+                style={{ fontSize: matchesXS ? "1.5rem" : "3.5rem" }}
+              >
+                Welcome to
+                <Typography
+                  variant="h1"
+                  style={{
+                    display: "inline",
+                    fontSize: matchesXS ? "2rem" : "4rem",
+                    marginLeft: "6px",
+                    marginRight: "10px",
+                  }}
+                >
+                  Chuku
+                </Typography>
+                crypto currency website.
+                <br /> A small project that was created for fun using Python &
+                React.
+                <br />
+                Try it by yourself! see how you can make transactions, mine
+                blocks and watch how they are added to the blockchain!
+              </Typography>
+            </Grid>
+            <Grid item className={classes.button}>
+              <ClipPathButton onClick={() => setModal(true)} />
+            </Grid>
+            {/* Footer */}
+            <Grid container direction="column" item className={classes.footer}>
+              <Footer />
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 

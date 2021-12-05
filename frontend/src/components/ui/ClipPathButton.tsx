@@ -1,11 +1,13 @@
 import { makeStyles, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  a: {
+  button: {
     position: "relative",
     display: "inline-block",
     width: "180px",
     height: "50px",
+    background: "none",
+    border: "none",
     "& span": {
       position: "absolute",
       top: 0,
@@ -38,12 +40,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ClipPathButton() {
+interface IClipPathButton {
+  onClick: () => void;
+}
+
+function ClipPathButton(props: IClipPathButton) {
   const classes = useStyles();
 
   return (
     <div>
-      <a href="#" className={classes.a}>
+      <button className={classes.button} onClick={props.onClick}>
         <span>
           <Typography variant="body1" style={{ fontSize: "36px" }}>
             Continue
@@ -54,7 +60,7 @@ function ClipPathButton() {
             Continue
           </Typography>
         </span>
-      </a>
+      </button>
     </div>
   );
 }

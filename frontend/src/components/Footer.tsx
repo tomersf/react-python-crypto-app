@@ -8,8 +8,14 @@ function Footer() {
       </Typography>
       <Grid item container style={{ justifyContent: "center" }}>
         <Grid item>
-          {/* Linkdin */}
-          <IconButton color="primary">
+          {/* Linkedin */}
+          <IconButton
+            color="primary"
+            aria-label="Linkedin.com"
+            onClick={() =>
+              window.open("https://www.linkedin.com/in/tomer-shafir-790351180/")
+            }
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="6rem"
@@ -23,7 +29,13 @@ function Footer() {
         </Grid>
         {/* Github */}
         <Grid item>
-          <IconButton color="primary">
+          <IconButton
+            color="primary"
+            aria-label="Github.com"
+            onClick={() =>
+              window.open("https://github.com/tomersf/react-python-crypto-app")
+            }
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="6rem"
