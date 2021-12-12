@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
       transition: "0.5s",
       clipPath: "polygon(60% 0, 100% 0, 100% 100%, 60% 100%, 40% 53%)",
     },
-    "& span:nth-child(2):hover": {
+    "& span:nth-child(2):hover, span:nth-child(2):focus": {
       clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 50%)",
       color: theme.palette.secondary.main,
     },

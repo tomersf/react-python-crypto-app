@@ -9,10 +9,11 @@ import {
   Backdrop,
   Fade,
   TextField,
-  IconButton,
   Button,
 } from "@material-ui/core";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router";
+import { UserContext } from "../App";
 import Footer from "./Footer";
 import ClipPathButton from "./ui/ClipPathButton";
 
@@ -131,19 +132,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LandingPage = () => {
+  const userContext = useContext(UserContext);
   const [modal, setModal] = useState(false);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(userContext.userName);
   const [error, setError] = useState(false);
   const classes = useStyles();
   const theme = useTheme();
   const matchesXS = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
 
-  const validateUserName = (username: string): boolean => {
+  const validateUserName = (username: string | undefined): boolean => {
     let valid = false;
-    if (username.trim().length !== 0) {
+
+    if (username && username.trim().length !== 0) {
       valid = true;
     }
-    console.log(username);
+
     setError(!valid);
     setUsername(username);
     return valid;
@@ -153,7 +157,8 @@ const LandingPage = () => {
     if (validateUserName(username)) {
       setError(false);
       setModal(false);
-      // go to next page
+      userContext.updateName(username!);
+      navigate("/home");
     } else {
       return;
     }
